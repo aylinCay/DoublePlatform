@@ -28,6 +28,8 @@ public class PlayerController : MonoBehaviour
     private Vector3 _newPosition;
 
     private float _distance;
+    
+    private Vector3 _rolltrans;
 
     public Vector3 velocityZ =>
         new Vector3(_rigidbody.velocity.x, _rigidbody.velocity.y, forwardSpeed);
@@ -53,6 +55,7 @@ public class PlayerController : MonoBehaviour
     {
         _rigidbody = GetComponent<Rigidbody>();
         animator = GetComponentInChildren<Animator>();
+       
     }
 
        
@@ -70,13 +73,20 @@ public class PlayerController : MonoBehaviour
 
              targetDir = Vector3.zero;
          }
-         
+
+         if (targetDir == Vector3.down)
+         {
+             Roll();
+             
+         }
+
          Move(targetPos);
     }
     
     public void Move( Vector3 target)
     {
         _rigidbody.velocity = velocityZ;
+       
        
             if (isTargetSetted)
             {
@@ -93,9 +103,9 @@ public class PlayerController : MonoBehaviour
                     transform.position = target;
                     isTargetSetted = false;
                 }
-               
+                
             }
-            
+
     }
 
     public void Jump()
@@ -104,20 +114,26 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("isJump",true);
 
     }
-    
+
+    public void Roll()
+    {
+        animator.SetBool("isRoll" ,true);
+        isGrounded = false;
+    }
     private void OnCollisionStay(Collision collisionInfo)
     {
         if (collisionInfo.gameObject != null)
         {
             isGrounded = true;
          animator.SetBool("isJump" , false);
+         animator.SetBool("isRoll" , false);
         }
+        
     }
 
     private void OnCollisionExit(Collision other)
     {
         isGrounded = false;
-        
     }
 }
 
