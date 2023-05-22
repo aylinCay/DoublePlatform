@@ -30,15 +30,14 @@ public class PlayerController : MonoBehaviour
     private float _distance;
     
     private Vector3 _rolltrans;
-
+    
     public Vector3 velocityZ =>
         new Vector3(_rigidbody.velocity.x, _rigidbody.velocity.y, forwardSpeed);
     
    
      public Vector3 refVector ;
     public Vector3 targetPos { get; set; } = Vector3.zero;
-
-
+    
     public float forwardSpeed = 20f;
 
     public float jumpForce;
@@ -46,16 +45,17 @@ public class PlayerController : MonoBehaviour
     public bool isGrounded;
     
     public bool isTargetSetted;
-
+    
     public InputManager ınputManager;
 
     public Animator animator;
+    
+    public CapsuleCollider standCollider,bowCollider;
         
     void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
         animator = GetComponentInChildren<Animator>();
-       
     }
 
        
@@ -77,11 +77,18 @@ public class PlayerController : MonoBehaviour
          if (targetDir == Vector3.down)
          {
              Roll();
-             
          }
+         
 
          Move(targetPos);
     }
+
+    public void StandUp()
+    {
+        bowCollider.enabled = false;
+        standCollider.enabled = true;
+    }
+    
     
     public void Move( Vector3 target)
     {
@@ -90,7 +97,7 @@ public class PlayerController : MonoBehaviour
        
             if (isTargetSetted)
             {
-                 transformPosition = transform.position;
+                transformPosition = transform.position;
                  _distance = Vector3.Distance(transform.position, target);
                 if (_distance > .025f)
                 {
@@ -110,23 +117,35 @@ public class PlayerController : MonoBehaviour
 
     public void Jump()
     {
-        _rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        _rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
         animator.SetBool("isJump",true);
 
     }
 
     public void Roll()
     {
+        standCollider.enabled = false;
+        bowCollider.enabled = true;
         animator.SetBool("isRoll" ,true);
         isGrounded = false;
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Obstacle")
+        {
+            Debug.Log("Obstacle");
+        }
+    }
+
     private void OnCollisionStay(Collision collisionInfo)
     {
         if (collisionInfo.gameObject != null)
         {
             isGrounded = true;
-         animator.SetBool("isJump" , false);
-         animator.SetBool("isRoll" , false);
+            animator.SetBool("isJump" , false);
+          animator.SetBool("isRoll" , false);
+
         }
         
     }
@@ -134,6 +153,7 @@ public class PlayerController : MonoBehaviour
     private void OnCollisionExit(Collision other)
     {
         isGrounded = false;
+        
     }
 }
 

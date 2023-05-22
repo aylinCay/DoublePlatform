@@ -45,8 +45,7 @@ public class InputManager : MonoBehaviour
             result = Vector3.zero;
             return Vector3.down;
         }
-      
-        Debug.Log(_firstInput.y +"  " + _secondInput.y +"  " + result.y);
+        
 
         return (result.x > 0 ? -1 : 1) * Vector3.right;
 
