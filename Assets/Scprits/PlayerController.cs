@@ -117,8 +117,10 @@ public class PlayerController : MonoBehaviour
 
     public void Jump()
     {
-        _rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
+       
+        _rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         animator.SetBool("isJump",true);
+        
 
     }
 
@@ -136,6 +138,12 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("Obstacle");
         }
+
+        if (collision.gameObject.tag == "Finish")
+        {
+            animator.SetBool("isFinish",true);
+            forwardSpeed = 0f;
+        }
     }
 
     private void OnCollisionStay(Collision collisionInfo)
@@ -144,7 +152,7 @@ public class PlayerController : MonoBehaviour
         {
             isGrounded = true;
             animator.SetBool("isJump" , false);
-          animator.SetBool("isRoll" , false);
+            animator.SetBool("isRoll" , false);
 
         }
         
